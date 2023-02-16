@@ -1,3 +1,4 @@
+from typing import AsyncIterable
 import aiohttp
 import asyncio
 from bs4 import BeautifulSoup
@@ -5,11 +6,12 @@ from dataclasses import dataclass
 
 @dataclass
 class LastOffer:
+    link_to_page: str
+    link_to_advertisement: str
     name: str
-    link: str
 
     def __str__(self) -> str:
-        return f"Новый автомобиль!\n🚘 Название: {self.name}\n🔗 Ссылка: {self.link}"
+        return f"Новый автомобиль!\n🚘 Название: {self.name}\n🔗 Ссылка: {self.link_to_advertisement}"
     
 
 def get_links() -> list[str] | None:
@@ -40,55 +42,60 @@ def get_tasks(session: aiohttp.ClientSession, links: list[str]) -> list | None:
     tasks = []
 
     for i in links:
-        tasks.append(session.get(i))
+        tasks.append(get_last_advertisement(i, session=session))
 
-    return tasks if tasks else None
+    return tasks
 
+async def ticker(to: int) -> AsyncIterable:
 
-async def get_last_advertisement(link: str, session: aiohttp.ClientSession) -> LastOffer:
+    for i in range(to):
+
+        yield i
+
+async def get_last_advertisement(link: str, session: aiohttp.ClientSession) -> LastOffer | None:
 
     final_link = ''
-    car_name = 'Undefined'
-    while '-' not in final_link:
+    car_name = ''
+    counter = 0
+
+    async for i in ticker(6):
 
         try:
-            async with session:
-                res = await session.get("https://www.marktplaats.nl/l/auto-s/bmw/f/2-serie/10901/")
-                bs = BeautifulSoup(await res.text(), features="html.parser")
 
-                tag = bs.find_all("ul")
-                final_link = f"https://www.marktplaats.nl{tag[4].find_all('a')[0].get('href')}"
-                car_name = tag[4].find_all('h3')[0].contents[0]
-        except:
-            break
+            await asyncio.sleep(2)
+            
+            res = await session.get(link)
+            bs = BeautifulSoup(await res.text(), features="html.parser")
 
-    return LastOffer(car_name, link)
 
-async def send_requests(links: list[str] | None) -> dict | None:
-    """Makes parallel requests to links
+            tag = bs.find_all("ul")
+            final_link = f"https://www.marktplaats.nl{tag[4].find_all('a')[0].get('href')}"
+            car_name = tag[4].find_all('h3')[0].contents[0]
 
-    Args:
-        links (list): links to be requested
+            if '-' in final_link:
 
-    Returns:
-        dict | None: returns a ditionary in format {link_name: server_answer}
-    """
+                print(final_link, car_name)
+                return LastOffer(link, final_link, car_name)
+                    
+        except Exception as e:
+            continue
+
+
+async def send_requests(links: list[str] | None) -> dict:
+
 
     link_answer = {}
 
     async with aiohttp.ClientSession() as session:
 
-        if links is not None:
+        if links:
             tasks = get_tasks(session, links)
 
             responses = await asyncio.gather(*tasks)
+
             for i in responses:
-                link_answer[str(i.real_url)] = await i.text()
-            
-            return link_answer
-        
-        else:
-            return None
+                if i:
 
+                    link_answer[i.link_to_page] = i.link_to_advertisement
 
-asyncio.run(send_requests(links=get_links()))
+        return link_answer
