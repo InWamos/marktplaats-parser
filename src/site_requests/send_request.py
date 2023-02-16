@@ -6,6 +6,15 @@ from dataclasses import dataclass
 
 @dataclass
 class LastOffer:
+    """Dataclass. Consists of 3 variables, used to provide a return of
+    get_last_advertisement()
+
+    Returns:
+        LastOffer: consists of
+            link to the page with advertisements(link_to_page),
+            link to certain advertisement(link_to_advertisement),
+            name of the advertisement(name);
+    """
     link_to_page: str
     link_to_advertisement: str
     name: str
@@ -56,7 +65,6 @@ async def get_last_advertisement(link: str, session: aiohttp.ClientSession) -> L
 
     final_link = ''
     car_name = ''
-    counter = 0
 
     async for i in ticker(6):
 

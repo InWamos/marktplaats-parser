@@ -2,7 +2,12 @@ from pyrogram.client import Client
 from pyrogram.types.messages_and_media import Message
 
 async def write_new_link(client: Client, message: Message) -> Message:
-    
+    """Appends link to the txt file
+
+    Args:
+        client (Client): Pyrogram client instance
+        message (Message): Actual JSON from command handler
+    """
     try:
         link = message.text.split(' ')[1]
         with open('links.txt', 'a', encoding='utf-8') as file:
@@ -20,7 +25,12 @@ async def write_new_link(client: Client, message: Message) -> Message:
     
 
 async def delete_last_row(client: Client, message: Message) -> None:
-    
+    """Deletes the last appended row in
+
+    Args:
+        client (Client): Pyrogram client instance
+        message (Message): Actual JSON from command handler
+    """
     try:
 
         with open('links.txt', 'r', encoding='utf-8') as file:
