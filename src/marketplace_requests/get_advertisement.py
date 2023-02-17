@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from dataclasses import dataclass
 
 @dataclass
-class LastOffer:
+class LastCarAdvertisement:
     """Dataclass. Consists of 3 variables, used to provide a return of
     get_last_advertisement()
 
@@ -61,7 +61,7 @@ async def ticker(to: int) -> AsyncIterable:
 
         yield i
 
-async def get_last_advertisement(link: str, session: aiohttp.ClientSession) -> LastOffer | None:
+async def get_last_advertisement(link: str, session: aiohttp.ClientSession) -> LastCarAdvertisement | None:
 
     final_link = ''
     car_name = ''
@@ -83,16 +83,16 @@ async def get_last_advertisement(link: str, session: aiohttp.ClientSession) -> L
             if '-' in final_link:
 
                 print(final_link, car_name)
-                return LastOffer(link, final_link, car_name)
+                return LastCarAdvertisement(link, final_link, car_name)
                     
         except Exception as e:
             continue
 
 
-async def send_requests(links: list[str] | None) -> dict:
+async def send_requests(links: list[str] | None) -> list[LastCarAdvertisement]:
 
 
-    link_answer = {}
+    link_answer = []
 
     async with aiohttp.ClientSession() as session:
 
@@ -104,6 +104,6 @@ async def send_requests(links: list[str] | None) -> dict:
             for i in responses:
                 if i:
 
-                    link_answer[i.link_to_page] = i.link_to_advertisement
-
+                    link_answer.append(i)
+                    
         return link_answer

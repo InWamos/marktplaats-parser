@@ -1,8 +1,8 @@
 from pyrogram.client import Client
 from pyrogram.types.messages_and_media import Message
-from parsers.parser import LastOffer
+from src.marketplace_requests.get_advertisement import LastCarAdvertisement
 
-async def send_update(client: Client, new_offer: LastOffer) -> Message:
+async def send_update(client: Client, new_offer: LastCarAdvertisement) -> Message:
     _chat_id = 5252866509
 
     async with client:
