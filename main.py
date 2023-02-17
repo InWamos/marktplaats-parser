@@ -1,9 +1,9 @@
 import asyncio
 import logging
 from threading import Thread
+
 from src.pyro_modules.bot import Bot
-from src.data_handlers.json_data_handler import update_json_file
-from src.marketplace_requests.get_advertisement import send_requests, get_links
+from src.marketplace_requests.get_advertisement import send_requests_loop, get_links
 
 logging.basicConfig(
     format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S',
@@ -13,8 +13,10 @@ logging.basicConfig(
 async def main() -> None:
     try:
         _bot = Bot()
-        lo = await send_requests(get_links())
-        await update_json_file(lo, _bot._bot)
+        Thread(target=send_requests_loop, args=(get_links(), _bot._bot)).start()
+        Thread(target=_bot.run)
+        # lo = await send_requests(get_links())
+        # await update_json_file(lo, _bot._bot)
 
     except:
         logging.exception("Error in the main thread: ", exc_info=True)    

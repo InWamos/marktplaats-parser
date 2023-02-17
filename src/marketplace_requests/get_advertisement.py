@@ -1,8 +1,14 @@
-from typing import AsyncIterable
+import time
 import aiohttp
 import asyncio
-from bs4 import BeautifulSoup
+import logging
+
+from typing import AsyncIterable
 from dataclasses import dataclass
+
+from bs4 import BeautifulSoup
+from pyrogram.client import Client
+from src.data_handlers.json_data_handler import update_json_file
 
 @dataclass
 class LastCarAdvertisement:
@@ -22,6 +28,11 @@ class LastCarAdvertisement:
     def __str__(self) -> str:
         return f"Новый автомобиль!\n🚘 Название: {self.name}\n🔗 Ссылка: {self.link_to_advertisement}"
     
+logging.basicConfig(
+    format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S',
+    filename='logger.log',
+    filemode='w')
+
 
 def get_links() -> list[str] | None:
     """Parses .txt with links   
@@ -91,7 +102,6 @@ async def get_last_advertisement(link: str, session: aiohttp.ClientSession) -> L
 
 async def send_requests(links: list[str] | None) -> list[LastCarAdvertisement]:
 
-
     link_answer = []
 
     async with aiohttp.ClientSession() as session:
@@ -107,3 +117,18 @@ async def send_requests(links: list[str] | None) -> list[LastCarAdvertisement]:
                     link_answer.append(i)
                     
         return link_answer
+    
+async def send_requests_loop(links: list[str] | None, client: Client) -> None:
+
+    while True:
+        try:
+            time.sleep(60)
+
+            offers_list = await send_requests(links=links)
+            await update_json_file(offers_list, client)
+
+        except:
+            logging.exception(
+                msg="Error in get_advertisement.py in send_requests_loop",
+                exc_info=True
+            )
