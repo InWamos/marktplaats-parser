@@ -64,7 +64,7 @@ async def get_last_advertisement(link: str, session: aiohttp.ClientSession) -> L
         try:
 
             await asyncio.sleep(2)
-            
+            print(i)
             res = await session.get(link)
             bs = BeautifulSoup(await res.text(), features="html.parser")
 
@@ -104,10 +104,10 @@ async def send_requests_loop(links: list[str] | None, client: Client) -> None:
 
     while True:
         try:
-            time.sleep(60)
 
             offers_list = await send_requests(links=links)
             await update_json_file(offers_list, client)
+            await asyncio.sleep(60)
 
         except:
             logging.exception(

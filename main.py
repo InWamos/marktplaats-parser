@@ -1,6 +1,5 @@
 import asyncio
 import logging
-from threading import Thread
 
 from src.pyro_modules.bot import Bot
 from src.marketplace_requests.get_advertisement import send_requests_loop, get_links
@@ -12,13 +11,11 @@ logging.basicConfig(
 
 async def main() -> None:
     try:
-        _bot = Bot()
-
-        loops = [
-            send_requests_loop(links=get_links(), client=_bot._bot),
-            _bot.run()
-        ]
-        await asyncio.gather(*loops)
+        bot_client = Bot("main_bot")
+        f1 = send_requests_loop(links=get_links(), client=bot_client.get_bot())
+        f2 = bot_client.run()
+        tasks = [f1, f2]
+        await asyncio.gather(*tasks)
 
     except:
         logging.exception("Error in the main thread: ", exc_info=True)    
