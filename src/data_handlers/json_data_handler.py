@@ -1,7 +1,7 @@
 import json
 from pyrogram.client import Client
 from src.pyro_modules.send_update import send_update
-from src.marketplace_requests.get_advertisement import LastCarAdvertisement
+from src.classes.last_car_ad import LastCarAdvertisement
 
 async def update_json_file(last_offers: list[LastCarAdvertisement], client: Client) -> None:
 

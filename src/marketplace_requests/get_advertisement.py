@@ -4,30 +4,12 @@ import asyncio
 import logging
 
 from typing import AsyncIterable
-from dataclasses import dataclass
 
 from bs4 import BeautifulSoup
 from pyrogram.client import Client
 from src.data_handlers.json_data_handler import update_json_file
-
-@dataclass
-class LastCarAdvertisement:
-    """Dataclass. Consists of 3 variables, used to provide a return of
-    get_last_advertisement()
-
-    Returns:
-        LastOffer: consists of
-            link to the page with advertisements(link_to_page),
-            link to certain advertisement(link_to_advertisement),
-            name of the advertisement(name);
-    """
-    link_to_page: str
-    link_to_advertisement: str
-    name: str
-
-    def __str__(self) -> str:
-        return f"Новый автомобиль!\n🚘 Название: {self.name}\n🔗 Ссылка: {self.link_to_advertisement}"
-    
+from src.classes.last_car_ad import LastCarAdvertisement
+  
 logging.basicConfig(
     format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S',
     filename='logger.log',

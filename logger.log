@@ -1,0 +1,13 @@
+17-Feb-23 13:36:59 - Error in the main thread: 
+Traceback (most recent call last):
+  File "/home/w/Documents/coding/Python/Parsers/marktplaats parser/main.py", line 18, in main
+    _bot.run()
+  File "/home/w/Documents/coding/Python/Parsers/marktplaats parser/src/pyro_modules/bot.py", line 27, in run
+    self._bot.run()
+  File "/home/w/Documents/coding/Python/Parsers/marktplaats parser/venv/lib/python3.10/site-packages/pyrogram/methods/utilities/run.py", line 85, in run
+    run(idle())
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 622, in run_until_complete
+    self._check_running()
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 582, in _check_running
+    raise RuntimeError('This event loop is already running')
+RuntimeError: This event loop is already running

@@ -13,10 +13,12 @@ logging.basicConfig(
 async def main() -> None:
     try:
         _bot = Bot()
-        Thread(target=send_requests_loop, args=(get_links(), _bot._bot)).start()
-        Thread(target=_bot.run)
-        # lo = await send_requests(get_links())
-        # await update_json_file(lo, _bot._bot)
+
+        loops = [
+            send_requests_loop(links=get_links(), client=_bot._bot),
+            _bot.run()
+        ]
+        await asyncio.gather(*loops)
 
     except:
         logging.exception("Error in the main thread: ", exc_info=True)    
