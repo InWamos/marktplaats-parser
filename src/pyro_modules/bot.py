@@ -11,10 +11,13 @@ class Bot:
 
         self._bot = Client(
             name=session_name,
-            bot_token="6290018241:AAFm1gdY7RGzF7X60YSvINrfZMJy-k4YJio"
+            bot_token='6290018241:AAFm1gdY7RGzF7X60YSvINrfZMJy-k4YJio',
+            api_id=23001853,
+            api_hash='ab37512e9f8af726a669ceb19bce06f3',
             )
         
-    
+    def add_handlers(self, bot: Client) -> None:
+
         self._bot.add_handler(
             MessageHandler(
                 callback=write_new_link,
@@ -29,9 +32,11 @@ class Bot:
             )
         )
 
-    async def run(self) -> None:
+    async def run_bot(self) -> None:
         await self._bot.start()
+        self.add_handlers(self.get_bot())
         await idle()
+        await self._bot.stop()
 
     def get_bot(self) -> Client:
         return self._bot

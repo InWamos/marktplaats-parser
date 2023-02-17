@@ -9,11 +9,12 @@ logging.basicConfig(
     filename='logger.log',
     filemode='w')
 
+bot_client = Bot("main_bot")
+
 async def main() -> None:
     try:
-        bot_client = Bot("main_bot")
         f1 = send_requests_loop(links=get_links(), client=bot_client.get_bot())
-        f2 = bot_client.run()
+        f2 = bot_client.run_bot()
         tasks = [f1, f2]
         await asyncio.gather(*tasks)
 
@@ -21,4 +22,5 @@ async def main() -> None:
         logging.exception("Error in the main thread: ", exc_info=True)    
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
