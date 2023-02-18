@@ -1,4 +1,3 @@
-import time
 import aiohttp
 import asyncio
 import logging
@@ -100,13 +99,15 @@ async def send_requests(links: list[str] | None) -> list[LastCarAdvertisement]:
                     
         return link_answer
     
-async def send_requests_loop(links: list[str] | None, client: Client) -> None:
+async def send_requests_loop(send_update: object) -> None:
 
     while True:
         try:
+            links = get_links()
 
             offers_list = await send_requests(links=links)
-            await update_json_file(offers_list, client)
+
+            await update_json_file(offers_list, send_update)
             await asyncio.sleep(60)
 
         except:
@@ -114,3 +115,4 @@ async def send_requests_loop(links: list[str] | None, client: Client) -> None:
                 msg="Error in get_advertisement.py in send_requests_loop",
                 exc_info=True
             )
+            await asyncio.sleep(60)

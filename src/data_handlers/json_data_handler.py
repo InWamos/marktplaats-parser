@@ -1,9 +1,9 @@
 import json
-from pyrogram.client import Client
-from src.pyro_modules.send_update import send_update
-from src.classes.last_car_ad import LastCarAdvertisement
 
-async def update_json_file(last_offers: list[LastCarAdvertisement], client: Client) -> None:
+from src.classes.last_car_ad import LastCarAdvertisement
+from src.pyro_modules.bot import Bot
+
+async def update_json_file(last_offers: list[LastCarAdvertisement], send_update) -> None:
 
 
     with open('last_offers.json', 'r', encoding='utf-8') as json_file:
@@ -14,10 +14,10 @@ async def update_json_file(last_offers: list[LastCarAdvertisement], client: Clie
             if i.link_to_page in data:
 
                 if data[i.link_to_page] != i.link_to_advertisement:
-                    await send_update(client, i)
+                    await send_update(i)
 
             elif i.link_to_page not in data:
-                await send_update(client, i)
+                await send_update(i)
 
             data[i.link_to_page] = i.link_to_advertisement
         
