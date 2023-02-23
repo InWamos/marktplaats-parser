@@ -36,7 +36,7 @@ class Bot:
  
     async def send_message_on_update(self, new_offer: LastCarAdvertisement) -> Message:
         
-        _chat_id = 5252866509
+        _chat_id = 1476875922
 
         return await self._bot.send_message(
             chat_id=_chat_id, text=str(new_offer)

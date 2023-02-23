@@ -62,7 +62,7 @@ async def get_last_advertisement(link: str, session: aiohttp.ClientSession) -> L
 
         try:
 
-            await asyncio.sleep(2)
+            await asyncio.sleep(4)
             print(i)
             res = await session.get(link)
             bs = BeautifulSoup(await res.text(), features="html.parser")
@@ -96,7 +96,9 @@ async def send_requests(links: list[str] | None) -> list[LastCarAdvertisement]:
                 if i:
 
                     link_answer.append(i)
-                    
+        else:
+            logging.info(msg="No elements in list. Skipping...")
+
         return link_answer
     
 async def send_requests_loop(send_update: object) -> None:
