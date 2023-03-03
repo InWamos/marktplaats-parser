@@ -3,7 +3,7 @@ import logging
 import sys
 
 from src.pyro_modules.bot import Bot
-from src.marketplace_requests.get_advertisement import send_requests_loop
+from src.marketplace_requests.get_advertisement_old import send_requests_loop
 
 logging.basicConfig(
     format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S',
