@@ -1,11 +1,9 @@
-import aiohttp
-import asyncio
 import logging
+import time
 
-from typing import AsyncIterable
 
-from bs4 import BeautifulSoup
-from pyrogram.client import Client
+from selenium import webdriver
+from selenium.webdriver.common.by import By
 from src.data_handlers.json_data_handler import update_json_file
 from src.classes.last_car_ad import LastCarAdvertisement
   
@@ -14,107 +12,36 @@ logging.basicConfig(
     filename='logger.log',
     filemode='w')
 
+def send_requests() -> list[LastCarAdvertisement]:
 
-def get_links() -> list[str] | None:
-    """Parses .txt with links   
+    items_list = []
+    options = webdriver.ChromeOptions()
+    options.add_argument("headless")
+    driver = webdriver.Chrome("./driver/chromedriver", options=options)
 
-    Returns:
-        list: list of parsed links from txt
-    """
+    try:
+        driver.get("https://www.marktplaats.nl/l/auto-s/#constructionYearFrom:2006|PriceCentsFrom:100000|PriceCentsTo:1000000|sortBy:SORT_INDEX|sortOrder:DECREASING")
+        time.sleep(2)
 
-    with open('links.txt', 'r', encoding='utf-8') as file:
-        links = file.readlines()
-    
-    return links if links else None
-    
-def get_tasks(session: aiohttp.ClientSession, links: list[str]) -> list | None:
-    """It is required for asyncio to create a tasks for executing in parallel.
-       This function returns a list of tasks to execute concurrently.
+        consent_button = driver.find_element(By.XPATH, "/html/body/div[2]/div/div[3]/button[1]")
+        consent_button.click()
+        time.sleep(2)
 
-    Args:
-        session (aiohttp.ClientSession): aiohttp session
-        links (list[str]): list of links
+        gallery_div = driver.find_element(By.CSS_SELECTOR, "ul.hz-Listings:nth-child(3)")
+        gallery_items = gallery_div.find_elements(By.TAG_NAME, "li")
 
-    Returns:
-        tasks: a list with tasks
-        None: if links is empty
-    """
+        for i, k in enumerate(gallery_items):
+            try:
+                link_to_add = k.find_element(By.TAG_NAME, "a")
+                item_name = driver.find_element(By.CSS_SELECTOR, f'li.hz-Listing:nth-child({i + 1}) > a:nth-child(1) > div:nth-child(2) > div:nth-child(1) > h3:nth-child(1)').text
+            
+                item_link = link_to_add.get_attribute('href')
+                
+                print(f"{i}: {item_name}: {item_link}")
+            except:
+                print(i)
+                pass
+            
 
-    tasks = []
-
-    for i in links:
-        tasks.append(get_last_advertisement(i, session=session))
-
-    return tasks
-
-async def ticker(to: int) -> AsyncIterable:
-
-    for i in range(to):
-
-        yield i
-
-async def get_last_advertisement(link: str, session: aiohttp.ClientSession) -> LastCarAdvertisement | None:
-
-    final_link = ''
-    car_name = ''
-
-    async for i in ticker(6):
-
-        try:
-
-            await asyncio.sleep(4)
-            print(i)
-            res = await session.get(link)
-            bs = BeautifulSoup(await res.text(), features="html.parser")
-
-
-            tag = bs.find_all("ul")
-            final_link = f"https://www.marktplaats.nl{tag[4].find_all('a')[0].get('href')}"
-            car_name = tag[4].find_all('h3')[0].contents[0]
-
-            if '-' in final_link:
-
-                print(final_link, car_name)
-                return LastCarAdvertisement(link, final_link, car_name)
-                    
-        except Exception as e:
-            continue
-
-
-async def send_requests(links: list[str] | None) -> list[LastCarAdvertisement]:
-
-    link_answer = []
-
-    async with aiohttp.ClientSession() as session:
-
-        if links:
-            tasks = get_tasks(session, links)
-
-            responses = await asyncio.gather(*tasks)
-
-            for i in responses:
-                if i:
-
-                    link_answer.append(i)
-        else:
-            logging.info(msg="No elements in list. Skipping...")
-
-        return link_answer
-    
-async def send_requests_loop(send_update: object) -> None:
-
-    while True:
-        try:
-            links = get_links()
-
-            offers_list = await send_requests(links=links)
-
-            await update_json_file(offers_list, send_update)
-            await asyncio.sleep(60)
-
-        except:
-            logging.exception(
-                msg="Error in get_advertisement.py in send_requests_loop",
-                exc_info=True
-            )
-            await asyncio.sleep(60)
+    finally:
+        driver.quit()
