@@ -45,7 +45,7 @@ class Bot:
         Returns:
             Message: bot's sent message
         """
-        _chat_id = 2023373795
+        _chat_id = 5252866509
 
         return await self._bot.send_message(
             chat_id=_chat_id, text=str(new_offer)

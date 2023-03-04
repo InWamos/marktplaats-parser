@@ -16,5 +16,5 @@ class CarAdvertisement:
     name: str
 
     def __str__(self) -> str:
-        return f"Новый автомобиль!\n🚘 Название: {self.name}\n🔗 Ссылка: {self.link_to_item}"
+        return f"🚘 Новый автомобиль!\n🔗 Ссылка: {self.link_to_item}"
   

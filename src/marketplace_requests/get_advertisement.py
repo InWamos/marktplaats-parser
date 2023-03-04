@@ -54,7 +54,6 @@ def get_advertisements_from_page(
                     link_to_item=item_link,
                     name=item_name
                 ))
-                print(f"{i}: {item_name}")
             except:
                 continue
         
