@@ -5,7 +5,7 @@ from pyrogram.types import Message
 from pyrogram.handlers.message_handler import MessageHandler
 
 from src.pyro_modules.bot_utils.handlers import write_new_link, delete_last_row
-from src.classes.last_car_ad import LastCarAdvertisement
+from src.classes.car_ad import CarAdvertisement
 
 class Bot:
 
@@ -13,7 +13,7 @@ class Bot:
 
         self._bot = Client(
             name=session_name,
-            bot_token='6290018241:AAFm1gdY7RGzF7X60YSvINrfZMJy-k4YJio',
+            bot_token='6054328632:AAFXZMgMcHmDuNuSjoBsdqEG1wkrCUgvKiM',
             api_id=23001853,
             api_hash='ab37512e9f8af726a669ceb19bce06f3',
             )
@@ -34,9 +34,9 @@ class Bot:
             )
         )
  
-    async def send_message_on_update(self, new_offer: LastCarAdvertisement) -> Message:
+    async def send_message_on_update(self, new_offer: CarAdvertisement) -> Message:
         
-        _chat_id = 1476875922
+        _chat_id = 2023373795
 
         return await self._bot.send_message(
             chat_id=_chat_id, text=str(new_offer)
