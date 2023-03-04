@@ -1,15 +1,13 @@
 import aiohttp
 import asyncio
 import logging
-import time
 
 from typing import AsyncIterable
 
 from bs4 import BeautifulSoup
-from selenium import webdriver
 from selenium.webdriver.common.by import By
 from src.data_handlers.json_data_handler import update_json_file
-from src.classes.last_car_ad import LastCarAdvertisement
+from src.classes.car_ad import CarAdvertisement
   
 logging.basicConfig(
     format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S',
@@ -55,7 +53,7 @@ async def ticker(to: int) -> AsyncIterable:
 
         yield i
 
-async def get_last_advertisement(link: str, session: aiohttp.ClientSession) -> LastCarAdvertisement | None:
+async def get_last_advertisement(link: str, session: aiohttp.ClientSession) -> CarAdvertisement | None:
 
     final_link = ''
     car_name = ''
@@ -77,13 +75,13 @@ async def get_last_advertisement(link: str, session: aiohttp.ClientSession) -> L
             if '-' in final_link:
 
                 print(final_link, car_name)
-                return LastCarAdvertisement(link, final_link, car_name)
+                return CarAdvertisement(link, final_link, car_name)
                     
         except Exception as e:
             continue
 
 
-async def send_requests(links: list[str] | None) -> list[LastCarAdvertisement]:
+async def send_requests(links: list[str] | None) -> list[CarAdvertisement]:
 
     link_answer = []
 
@@ -107,16 +105,16 @@ async def send_requests_loop(send_update: object) -> None:
 
     while True:
         try:
+            await asyncio.sleep(10)
             links = get_links()
 
             offers_list = await send_requests(links=links)
 
             await update_json_file(offers_list, send_update)
-            await asyncio.sleep(60)
 
         except:
             logging.exception(
                 msg="Error in get_advertisement.py in send_requests_loop",
                 exc_info=True
             )
-            await asyncio.sleep(60)
+            await asyncio.sleep(30)
