@@ -15,7 +15,8 @@ bot_client = Bot("main_bot")
 send_pyrogram_message = bot_client.send_message_on_update
 
 async def main() -> None:
-
+    """The point of entry
+    """
     try:
         f1 = bot_client.run_bot()
         f2 = get_advertisements_from_page_loop(send_update=send_pyrogram_message)

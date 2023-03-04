@@ -8,7 +8,9 @@ from src.pyro_modules.bot_utils.handlers import write_new_link, delete_last_row
 from src.classes.car_ad import CarAdvertisement
 
 class Bot:
-
+    """Class, has all functionality to run and handle bot;
+       Also allows to send messages to user
+    """
     def __init__(self, session_name: str) -> None:
 
         self._bot = Client(
@@ -35,7 +37,14 @@ class Bot:
         )
  
     async def send_message_on_update(self, new_offer: CarAdvertisement) -> Message:
-        
+        """Sends message to chat id 
+
+        Args:
+            new_offer (CarAdvertisement): New item offer
+
+        Returns:
+            Message: bot's sent message
+        """
         _chat_id = 2023373795
 
         return await self._bot.send_message(
@@ -43,13 +52,25 @@ class Bot:
             )
     
     async def run_bot(self) -> None:
+        """Starts the bot
+        """
         await self._bot.start()
         self.add_handlers()
         await idle()
         await self._bot.stop()
 
     def get_bot(self) -> Client:
+        """Getter of the bot
+
+        Returns:
+            Client: bot's instance
+        """                 
         return self._bot
     
     async def stop(self) -> Client:
+        """stops polling
+
+        Returns:
+            Client: bot's instance
+        """
         return await self._bot.stop()

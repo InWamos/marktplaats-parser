@@ -1,3 +1,7 @@
+##############################################################################
+###### This file is history, doesnt take any effect on programm runtime ######
+##############################################################################
+
 import aiohttp
 import asyncio
 import logging

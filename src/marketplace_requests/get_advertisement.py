@@ -65,7 +65,11 @@ def get_advertisements_from_page(
         return items_list
     
 async def get_advertisements_from_page_loop(send_update: object) -> None:
-    
+    """Function to put inside the loop in main.py
+
+    Args:
+        send_update (object): Bot's method send_message_on_update()
+    """
     while True:
         try:
             links = get_links()
